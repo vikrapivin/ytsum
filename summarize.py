@@ -44,7 +44,7 @@ class summarizeVid:
         self.context_length_end = context_length_end
         self.vidTitle = vidTitle
         self.device = device
-        self.segmentPrompt = "Only output the keys points of each segment, and while you can use the contexual words for reference, do not include information from the contextual words in your keys points. For reference, the title of the video is \"{self.vidTitle}\". If the segment contains any information relevant to the title of the video, include that information in the key points as well. Do not use any informal terminology."
+        self.segmentPrompt = f"Only output the keys points of each segment, and while you can use the contexual words for reference, do not include information from the contextual words in your keys points. For reference, the title of the video is \"{self.vidTitle}\". If the segment contains any information relevant to the title of the video, include that information in the key points as well. Do not use any informal terminology."
         self.tokenizer = AutoTokenizer.from_pretrained("deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B")
         self.model = AutoModelForCausalLM.from_pretrained("deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B").to(self.device)
         self.segmented_text = segmentText(self.transcript, word_count= word_count, start_overlap=context_length_start, end_overlap=context_length_end)
@@ -85,8 +85,8 @@ class summarizeVid:
         
         response = self.tokenizer.batch_decode(generated_ids, skip_special_tokens=False)
         return response
-    def summarizeSummariesFull(self, sumText, vidTitle, nwords_summary, **kwargs):
-        prompt =  f"Your goal is to create a summary in under {nwords_summary} words from a list of summaries of different segments of a YouTube video. Your goal is for the reader to be able to understand what happened without any additional context. The title of the video is: \"{vidTitle}\". If the title has a clickbait question in it, answer the clickbait question. Do not use any informal terminology, do not repeat the title, do not use terms like author."
+    def summarizeSummariesFull(self, sumText, nwords_summary, **kwargs):
+        prompt =  f"Your goal is to create a summary in under {nwords_summary} words from a list of summaries of different segments of a YouTube video. Your goal is for the reader to be able to understand what happened without any additional context. The title of the video is: \"{self.vidTitle}\". If the title has a clickbait question in it, answer the clickbait question. Do not use any informal terminology, do not repeat the title, do not use terms like author."
 
         messages = [
             {"role": "system", "content": prompt},
@@ -123,7 +123,7 @@ class summarizeVid:
                 output = output[0:-len(eos_token)] # remove end of sentence
             self.summ_output = self.summ_output + f'{part_count}. ' + output + '\n'
             part_count = part_count + 1
-        finSum = self.summarizeSummariesFull(self.summ_output, self.vidTitle, nwords_summary, max_new_tokens = max_new_tokens)
+        finSum = self.summarizeSummariesFull(self.summ_output, nwords_summary, max_new_tokens = max_new_tokens)
         self.finSum = finSum[0]
 
 
