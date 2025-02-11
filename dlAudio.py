@@ -12,7 +12,7 @@ def dlAudio(URL):
         - video ID
         - saved audio file path
     """
-    save_string = 'dl/%(title)s [%(id)s].%(ext)s'
+    save_string = 'dl/%(id)s.%(ext)s'
     ydl_opts = {}
     vid_json = None
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
@@ -36,4 +36,4 @@ def dlAudio(URL):
         error_code = ydl.download([URL])
         # TODO: implement error handling here later, assume it works for now
         
-    return vidTitle, vidID, f"dl/{vidTitle} [{vidID}].m4a"
+    return vidTitle, vidID, f"dl/{vidID}.m4a"
