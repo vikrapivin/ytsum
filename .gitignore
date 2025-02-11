@@ -1,0 +1,4 @@
+# ignore DL directory
+dl/
+summs/
+__pycache__/
